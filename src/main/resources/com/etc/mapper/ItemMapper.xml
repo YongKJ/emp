@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.ItemMapper">
+
+    <select id="getItemById" resultType="com.etc.domain.Item">
+        SELECT * FROM t_item WHERE id = #{id}
+    </select>
+
+    <select id="getAllItem" resultType="com.etc.domain.Item">
+        SELECT * FROM t_item
+    </select>
+
+    <insert id="addItem" parameterType="com.etc.domain.Item">
+	    INSERT INTO  t_item (count, name, type, uint) VALUES (#{count}, #{name}, #{type}, #{uint})
+	</insert>
+
+    <update id="modItemById" parameterType="com.etc.domain.Item" >
+        update t_item
+        <trim prefix="set" suffixOverrides=",">
+            <if test="count != null">
+                count = #{count},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="uint != null">
+                uint = #{uint}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delItemById">
+        DELETE FROM t_item WHERE id = #{id}
+    </delete>
+
+</mapper>

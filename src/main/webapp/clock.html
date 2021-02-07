@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万年历查询</title>
+    <meta name="keywords" content="万年日历查询,万年历,在线日历,在线月历,老黄历,万年历黄道吉日,万年历表,中华万年历,万年历表查询,万年历老黄历">
+    <meta name="description" content="万年历在线查询工具提供万年历黄道吉日查询，包括万年历农历日历查询，万年历农历转阳历，2020年日历查询。">
+    <link href="/emp/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/emp/static/css/style.css" rel="stylesheet">
+
+    <style>
+      .text-black-50 {
+        color: rgb(204 204 204 / 50%)!important;
+    }
+    
+    .calendar>table>tbody>tr>td:hover {
+        cursor: pointer;
+        background-color: beige;
+    }
+    
+    .selected {
+        background-color: beige;
+    }
+    
+    .fontsmall {
+        font-size: .75rem;
+    }
+</style>
+
+  </head>
+  <body>
+
+    <div id="content" class="container">
+
+      <div id="app" v-cloak>
+        <div class="border border-bottom-0 px-3">
+          <form class="form-inline">
+            <div class="form-group my-3 mr-3">
+              <select v-model="params.year" class="form-control">
+                <option v-bind:value="v" v-for="(v,k) in year">{{v}}年</option>
+              </select>
+            </div>
+            <div class="form-group my-3 mr-3">
+              <select v-model="params.month" class="form-control">
+                <option v-bind:value="v" v-for="(v,k) in month">{{v}}月</option>
+              </select>
+            </div>
+            <div class="form-group my-3 mr-3">
+              <select v-model="params.holiday" class="form-control">
+                <option value="">假期安排</option>
+                <option value="1">元旦节</option>
+                <option value="2">除夕</option>
+                <option value="2">春节</option>
+                <option value="4">清明节</option>
+                <option value="5">劳动节</option>
+                <option value="6">端午节</option>
+                <option value="9">中秋节</option>
+                <option value="10">国庆节</option>
+              </select>
+            </div>
+            <div class="form-group my-3 mr-3">
+              <button v-on:click="goback()" type="button" class="btn btn-light">返回今天</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-group">
+          <div class="card border-0 rounded-0">
+            <div class="table-responsive calendar">
+              <table class="table table-bordered text-center p-0 m-0">
+                <thead>
+                  <tr>
+                    <th>星期一</th>
+                    <th>星期二</th>
+                    <th>星期三</th>
+                    <th>星期四</th>
+                    <th>星期五</th>
+                    <th>星期六</th>
+                    <th>星期日</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <template v-for="n in gap">
+                      <td></td>
+                    </template>
+                    <template v-for="(item,index) in items.slice(0, 7-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template v-for="(item,index) in items.slice(7-gap, 14-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template v-for="(item,index) in items.slice(14-gap, 21-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template v-for="(item,index) in items.slice(21-gap, 28-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template v-for="(item,index) in items.slice(28-gap, 35-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template v-for="(item,index) in items.slice(35-gap, 42-gap)">
+                      <td v-on:click="setDetail(item.GregorianDateTime)" :class="[item.Active == '1' ? 'text-dark' : 'text-black-50',item.Current == '1' ? 'bg-warning' : '',item.GregorianDateTime == selected ? 'selected' : '']">
+                        <span v-if="item.IsJieJia == '1'" class="badge badge-danger">休假</span>
+                        <span v-if="item.IsBuBan == '1'" class="badge badge-secondary">补班</span>
+                        <h3 :class="['font-weight']">{{item.NDay}}</h3>
+                        <div class="fontsmall text-danger text-wrap" v-if="item.Jie != ''">{{item.Jie}}</div>
+                        <div class="fontsmall text-success" v-else-if="item.SolarTermName != ''">{{item.SolarTermName}}</div>
+                        <div class="fontsmall" v-else>{{item.LDay}}</div>
+                      </td>
+                    </template>
+                    <template v-for="a in afterGap">
+                      <td></td>
+                    </template>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card rounded-0">
+            <div class="card-body">
+              <h5 class="card-title">{{detail.GregorianDateTime}} <span class="card-subtitle mb-2 text-muted">{{detail.WeekDay}}</span></h5>
+              <table class="table table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">{{detail.LMonth}} {{detail.LDay}}</th>
+                    <th scope="col">{{detail.TianGanDiZhiYear}}年 {{detail.LYear}}年</th>
+                    <th scope="col">{{detail.TianGanDiZhiMonth}}月 {{detail.TianGanDiZhiDay}}日</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>宜：</th>
+                    <td colspan="2">{{detail.Yi}}</td>
+                  </tr>
+                  <tr>
+                    <th>忌：</th>
+                    <td colspan="2">{{detail.Ji}}</td>
+                  </tr>
+                  <tr>
+                    <th>神位：</th>
+                    <td colspan="2">{{detail.ShenWei}}</td>
+                  </tr>
+                  <tr>
+                    <th>胎神：</th>
+                    <td colspan="2">{{detail.Taishen}}</td>
+                  </tr>
+                  <tr>
+                    <th>冲煞：</th>
+                    <td colspan="2">{{detail.Chong}}</td>
+                  </tr>
+                  <tr>
+                    <th>岁煞：</th>
+                    <td colspan="2">{{detail.SuiSha}}</td>
+                  </tr>
+                  <tr>
+                    <th>五行：</th>
+                    <td colspan="2">
+                      五行甲子：{{detail.WuxingJiazi}} 纳音五行年：{{detail.WuxingNaYear}} 纳音五行月：{{detail.WuxingNaMonth}} 纳音五行日：{{detail.WuxingNaDay}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>星宿吉凶（东方星座）：</th>
+                    <td colspan="2">{{detail.XingEast}}</td>
+                  </tr>
+                  <tr>
+                    <th>星座：</th>
+                    <td colspan="2">{{detail.XingWest}}</td>
+                  </tr>
+                  <tr>
+                    <th>彭祖百忌：</th>
+                    <td colspan="2">{{detail.PengZu}}</td>
+                  </tr>
+                  <tr>
+                    <th>黄历12值神建：</th>
+                    <td colspan="2">{{detail.JianShen}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+
+          </div>
+          <div class="col-sm">
+
+          </div>
+        </div>
+
+
+      </div>
+
+    </div>
+
+    <script type="text/javascript" src="/emp/static/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/emp/static/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/emp/static/js/sticky.min.js"></script>
+    <script type="text/javascript" src="//at.alicdn.com/t/font_2038452_5y2hlwegyui.js"></script>
+
+
+    <script src="/emp/static/tool-box/polyfill.min.js"></script>
+    <script type="text/javascript" src="/emp/static/vue/vue.min.js"></script>
+    <script type="text/javascript" src="/emp/static/vue/axios.min.js"></script>
+    <script type="text/javascript">
+      new Vue({
+        el: '#app',
+        data: {
+          year: [1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985,
+            1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
+            2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+            2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036,
+            2037, 2038, 2039, 2040, 2041, 2042, 2043, 2044, 2045, 2046, 2047, 2048, 2049, 2050
+          ],
+          month: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+          params: {
+            year: 2020,
+            month: '',
+            holiday: '',
+          },
+          items: [],
+          detail: {},
+          selected: '',
+          gap: 0,
+          afterGap: 0,
+        },
+        mounted: async function() {
+          // 获取当前年份月份
+          this.setDate();
+          await this.getData();
+        },
+        methods: {
+          setDate: function() {
+            // 获取当前年份月份
+            var myDate = new Date();
+            this.params.year = myDate.getFullYear();
+            this.params.month = myDate.getMonth() + 1;
+          },
+          goback: function() {
+            this.setDate();
+            this.getData();
+          },
+          setDetail: function(GregorianDateTime) {
+            var that = this;
+            that.items.forEach(function(item, index) {
+              if (item.GregorianDateTime == GregorianDateTime) {
+                that.detail = item;
+                that.selected = GregorianDateTime;
+              }
+            });
+            // console.log(that.items,GregorianDateTime);
+          },
+          getData: function() {
+            var that = this;
+            axios.post(
+              '/emp/getCalendar?year=' + that.params.year + '&month=' + that.params.month + '&holiday=' + that.params.holiday
+            ).then(function(response) {
+              that.items = response.data.data;
+              // 默认当前
+              that.items.forEach(function(item, index) {
+                // 当前月，当前天选中
+                if (item.Current == 1) {
+                  that.detail = item;
+                  that.selected = item.GregorianDateTime;
+                }
+                // 选中当前天
+                var str = Date.parse(that.selected);
+                var date = new Date(str);
+                var day = date.getDate();
+                if (date.getDate() < 10) {
+                  day = '0' + date.getDate();
+                }
+                var month = that.params.month;
+                if (that.params.month < 10) {
+                  month = '0' + that.params.month;
+                }
+                var newDate = that.params.year + '-' + month + '-' + day;
+                // 当前月
+                if (item.GregorianDateTime == newDate) {
+                  that.detail = item;
+                  that.selected = newDate;
+                }
+              });
+
+              // 计算补位空格
+              if (response.data.data.length > 0) {
+                that.gap = response.data.data[0].NWeekDay - 1;
+              }
+              that.afterGap = 42 - that.items.length - that.gap;
+            }).catch(function(error) {
+              console.log(error);
+            });
+          }
+        },
+        watch: {
+          'params.year': function(nv, ov) {
+            this.getData();
+          },
+          'params.month': function(nv, ov) {
+            this.getData();
+          },
+          'params.holiday': function(nv, ov) {
+            if (nv != '') {
+              this.params.month = nv;
+            }
+            this.getData();
+          },
+        }
+      })
+    </script>
+
+  </body>
+</html>

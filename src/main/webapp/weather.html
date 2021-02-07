@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>vue全国城市天气预报API查询代码</title>
+    <script src="media/vue/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="media/qs/qs.js" type="text/javascript" charset="utf-8"></script>
+    <script src="media/axios/axios.js" type="text/javascript" charset="utf-8"></script>
+    <script src="media/element-ui/index.js" type="text/javascript" charset="utf-8"></script>
+    
+    <link rel="stylesheet" type="text/css" href="media/element-ui/theme-chalk/index.css" />
+    <style type="text/css">
+      #app {
+        width: 100%;
+      }
+      .main {
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      .city {
+        background-color: #039BE6;
+        color: white;
+        text-align: center;
+      }
+      .buttonStyle {
+        background-color: #13A2E6;
+        color: #B3EEFF;
+        border-color: #13A2E6;
+      }
+      .buttonStyle:hover, .buttonStyle:focus {
+        background-color: #13A2E6;
+        color: #B3EEFF;
+        border-color: #13A2E6;
+      }
+      .daily {
+        width: 100%;
+        background-color: #13A2E6;
+        color: white;
+        border-radius: 4px;
+      }
+      .hourly {
+          width: 101%;
+          background-color: #13A2E6;
+          color: white;
+          border-radius: 4px;
+          margin-bottom: 20px;
+          overflow: auto;
+      }
+      ::-webkit-scrollbar {
+          display: none;
+      }
+      .hourly::-webkit-scrollbar {
+        display: block;
+        width: 10px;
+        height: 10px;
+        background-color: #13A2E6;
+      }
+      
+      /*定义滑块颜色+圆角*/
+      ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #BDBDBD;
+      }
+      
+      /*定义滚动条轨道内阴影+圆角*/
+      ::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: #13A2E6;
+      }
+      .index {
+        width: 100%;
+        background-color: #13A2E6;
+        color: white;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <el-row>
+        <el-col :span="9" style="margin-left: 129px;">
+          <el-form style="user-select: none;">
+            <el-input style="width: 60%;margin-right: 10px;" @keyup.enter.native="searchCity()" v-model="search" placeholder="请输入城市名称..."></el-input>
+            <el-button type="Info" icon="el-icon-search" @click="searchCity()">搜索</el-button>
+          </el-form>
+        </el-col>
+      </el-row>
+      <el-row class="main">
+        <el-col :span="24">
+          <el-card class="city">
+            <el-row style="100%">
+              <el-col :span="12">
+                <el-container>
+                  <el-header>
+                    <span>
+                      <strong>
+                        <i class="el-icon-position"></i>
+                        {{weather.city}}
+                      </strong>
+                    </span>
+                    <span style="font-size: 14px;position: absolute;right: 20px;">
+                      更新时间：{{weather.updatetime.substring(11, 16)}}
+                    </span>
+                    <p>
+                      <el-image :src="'media/images/weathercn02/' + weather.img + '.png'" style="width: 40px;position: relative;top:10px;right: 5px;"></el-image>
+                      <span style="font-size: 18px;">
+                        {{weather.weather}}
+                      </span>
+                    </p>
+                  </el-header>
+                  <el-main>
+                    <p>
+                      <span style="font-size: 50px;position: relative;top: 10px;">
+                        <strong>{{weather.temp}}°</strong>
+                      </span>
+                    </p>
+                  </el-main>
+                  <el-footer>
+                    <el-button size="mini" round class="buttonStyle">
+                      <span>空气质量：{{weather.aqi.quality}}（{{weather.aqi.aqiinfo.measure}}）</span>
+                    </el-button>
+                  </el-footer>
+                </el-container>
+              </el-col>
+              <el-col :span="7" style="margin-top: 10px;">
+                <el-container>
+                  <el-row class="hourly">
+                    <el-row style="width: 80%;margin-left: 20px;">
+                      <p style="float: left;">
+                        <span>
+                          <i class="el-icon-wind-power"></i>
+                          风和湿度
+                        </span>
+                      </p>
+                    </el-row>
+                    
+                    <el-container style="text-align: left;margin-left: 20px;">
+                      <el-col :span="22">
+                        <p>风向<span style="float: right;">{{weather.winddirect}}</span></p>
+                        <p>风速<span style="float: right;">{{weather.windspeed}}米/秒</span></p>
+                        <p>风力<span style="float: right;">{{weather.windpower}}</span></p>
+                        <p>湿度<span style="float: right;">{{weather.humidity}}%</span></p>
+                      </el-col>
+                    </el-container>
+                  </el-row>
+                </el-container>
+              </el-col>
+            </el-row>
+            
+            <el-container style="margin-left: 12px;">
+              <el-row class="hourly" :gutter="25">
+                <el-row style="width: 100%;margin-left: 20px;">
+                  <p style="float: left;">
+                    <span>
+                      <i class="el-icon-info"></i>
+                      每小时预报
+                    </span>
+                  </p>
+                </el-row>
+                
+                <el-container style="margin-bottom: 30px;">
+                  <el-col :span="4" v-for="hour in weather.hourly">
+                    <p><span>{{hour.temp}}°</span></p>
+                    <p><span style="width: 10px;">{{hour.time.length == 5 ? hour.time : '0' + hour.time}}</span></p>
+                    <p><el-image :src="'media/images/weathercn02/' + hour.img + '.png'" /></p>
+                    <p><span>{{hour.weather}}</span></p>
+                  </el-col>
+                </el-container>
+              </el-row>
+            </el-container>
+            
+          
+            <el-container style="margin-bottom: 20px;">
+              <el-row class="daily">
+                <el-row style="width: 100%;margin-left: 20px;">
+                  <p style="float: left;">
+                    <span>
+                      <i class="el-icon-info"></i>
+                      未来一周预报
+                    </span>
+                  </p>
+                </el-row>
+                
+                <el-container style="margin-left: 130px;margin-bottom: 30px;">
+                  <el-col :span="3" v-for="day in weather.daily">
+                    <p><span>{{day.night.templow}}° / {{day.day.temphigh}}°</span></p>
+                    <p><span style="width: 10px;">{{day.week}}</span></p>
+                    <p><span style="width: 10px;">{{day.date.substring(5, 10).replace('-', '/')}}</span></p>
+                    <p><el-image :src="'media/images/weathercn02/' + day.day.img + '.png'" /></p>
+                    <p><span>{{day.day.weather}}</span></p>
+                  </el-col>
+                </el-container>
+              </el-row>
+            </el-container>
+            
+            <el-container>
+              <el-row class="index">
+                <el-row style="width: 100%;margin-left: 20px;">
+                  <p style="float: left;">
+                    <span>
+                      <i class="el-icon-info"></i>
+                      生活指数
+                    </span>
+                  </p>
+                </el-row>
+                
+                <el-container>
+                  <el-row style="width: 100%;text-align: left;padding-left: 20px;padding-right: 20px;">
+                    <el-col :span="12" v-for="(idx, i) in weather.index" style="overflow: auto;">
+                      <p>
+                        <span>
+                          <strong>{{idx.iname}}</strong>
+                        </span>&nbsp;&nbsp;
+                        <el-button size="mini" round style="background-color: #6FC6F0; color: #DAFAFE;border-color: #6FC6F0;">
+                          {{idx.ivalue}}
+                        </el-button>
+                      </p>
+                      <p>
+                        <span>
+                          {{idx.detail.length > 35 ? idx.detail : idx.detail + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;"}}
+                        </span>
+                      </p>
+                      <el-divider></el-divider>
+                    </el-col>
+                  </el-row>
+                </el-container>
+              </el-row>
+            </el-container>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+    
+
+    <script type="text/javascript">
+      Vue.prototype.$axios = axios;
+      Vue.prototype.$qs = window.Qs;
+      Vue.use(window.ELEMENT);
+      
+      new Vue({
+        el: '#app',
+        data: function() {
+          return {
+            city: '韶关',
+            weather: {},
+            search: ''
+          }
+        },
+        mounted() {
+          this.getWeatherInfo();
+        },
+        computed: {
+          getImg: function(num) {
+            return 'media/images/weathercn/' + num + '.png';
+          }
+        },
+        methods: {
+          getWeatherInfo: function() {
+            this.$axios.post('/emp/getWeather', this.$qs.stringify({
+              city: this.city
+            })).then((response) => {
+              this.weather = response.data.weather.result.result;
+              // console.log(this.weather);
+            }).catch(function (error) {
+              console.log(error);
+            });
+          },
+          searchCity: function() {
+            if(this.search != "") {
+              this.$axios.post('/emp/getWeather', this.$qs.stringify({
+                city: this.search
+              })).then((response) => {
+                this.weather = response.data.weather.result.result;
+                // console.log(this.weather);
+              }).catch(function (error) {
+                console.log(error);
+              });
+            }else {
+              this.$message({
+                type: 'warning',
+                message: '请输入城市名称！'
+              });
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

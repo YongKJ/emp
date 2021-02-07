@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>员工信息管理系统</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<!-- load css -->
+<link rel="shortcut icon" type="image/x-icon" href="/emp/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="media/layui/css/layui.css" media="all">
+<link rel="stylesheet" type="text/css" href="media/css/login.css" media="all">
+<link rel="stylesheet" type="text/css" href="media/css/verify.css">
+<script type="text/javascript" src="media/js/jquery.min.js"></script>
+<script type="text/javascript" src="media/layui/layui.js" charset="utf-8"></script>
+</head>
+<body class="layui-bg-black">
+	<div class="layui-canvs"></div>
+	<div class="layui-layout layui-layout-login">
+		<form action="login.do" method="post">
+			<h1>
+				<strong>员工信息管理系统</strong> <em>Employee Infomation Management System</em>
+			</h1>
+			<div class="layui-user-icon larry-login">
+				<input type="text" placeholder="账号" class="login_txtbx" id="no" name="no" />
+			</div>
+			<div class="layui-pwd-icon larry-login">
+				<input type="password" placeholder="密码" id="pass" name="pass" class="login_txtbx" />
+			</div>
+			<input type="hidden" name="ip" id="ip1"> 
+      <input type="hidden" name="city" id="cy1">
+			<div class="feri-code">
+				<div id="mpanel4"></div>
+			</div>
+			<div class="layui-submit larry-login">
+				<input onclick="empLogin()" id="btn1" disabled="disabled" value="立即登陆" class="submit_btn" />
+			</div>
+		</form>
+		<div class="layui-login-text">
+			<p>© 2020-2021 勇往直前KJ  版权所有</p>
+		</div>
+	</div>
+  
+	<script type="application/javascript" src="media/js/verify.min.js"></script>
+	<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+  <script src="media/js/jquery.cookie-1.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="media/js/login.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      //滑动验证码
+      $('#mpanel4').pointsVerify({
+        defaultNum: 6, //默认的文字数量
+        checkNum: 3, //校对的文字数量
+        vSpace: 5, //间隔
+        imgName: ['1.jpg', '2.jpg'],
+        imgSize: {
+          width: '400px',
+          height: '200px',
+        },
+        barSize: {
+          width: '400px',
+          height: '40px',
+        },
+        ready: function() {},
+        success: function() {
+          //......后续操作
+          $("#btn1").attr("disabled", false);
+        },
+        error: function() {}
+      });
+    });
+  </script>
+</body>
+</html>

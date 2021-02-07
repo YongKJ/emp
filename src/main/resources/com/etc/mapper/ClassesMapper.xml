@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.ClassesMapper">
+
+    <select id="getClassesById" resultType="com.etc.domain.Classes">
+        SELECT * FROM t_class WHERE id = #{id}
+    </select>
+
+    <select id="getAllClasses" resultType="com.etc.domain.Classes">
+        SELECT * FROM t_class
+    </select>
+
+    <insert id="addClasses" parameterType="com.etc.domain.Classes">
+	    INSERT INTO  t_class (major_id, class_name, class_date, class_time, class_address) VALUES (#{major_id}, #{class_name}, #{class_date}, #{class_time}, #{class_address})
+	</insert>
+
+    <update id="modClassesById" parameterType="com.etc.domain.Classes" >
+        update t_class
+        <trim prefix="set" suffixOverrides=",">
+            <if test="major_id != null">
+                major_id = #{major_id},
+            </if>
+            <if test="class_name != null and class_name !=''">
+                class_name = #{class_name},
+            </if>
+            <if test="class_date != null">
+                class_date = #{class_date},
+            </if>
+            <if test="class_time != null">
+                class_time = #{class_time},
+            </if>
+            <if test="class_address != null">
+                class_address = #{class_address}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delClassesById">
+        DELETE FROM t_class WHERE id = #{id}
+    </delete>
+
+</mapper>

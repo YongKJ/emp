@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.EmpMapper">
+
+    <select id="getEmpById" resultType="com.etc.domain.Emp">
+        SELECT * FROM t_emp WHERE id = #{id}
+    </select>
+
+    <select id="getEmpByNoAndPass" resultType="com.etc.domain.Emp">
+        SELECT * FROM t_emp WHERE no = #{no} AND pass = #{pass}
+    </select>
+
+    <select id="getAllEmp" resultType="com.etc.domain.Emp">
+        SELECT * FROM t_emp
+    </select>
+
+    <insert id="addEmp" parameterType="com.etc.domain.Emp">
+	    INSERT INTO  t_emp (no, pass, name, did, flag, sex, email, qq, phone, createdate, photo) VALUES (#{no}, #{pass}, #{name}, #{did}, #{flag}, #{sex}, #{email}, #{qq}, #{phone}, #{createdate}, #{photo})
+	</insert>
+
+    <update id="modEmpById" parameterType="com.etc.domain.Emp" >
+        update t_emp
+        <trim prefix="set" suffixOverrides=",">
+            <if test="no != null">
+                no = #{no},
+            </if>
+            <if test="pass != null">
+                pass = #{pass},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="did != null">
+                did = #{did},
+            </if>
+            <if test="flag != null">
+                flag = #{flag},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="qq != null">
+                qq = #{qq},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="createdate != null">
+                createdate = #{createdate},
+            </if>
+            <if test="photo != null">
+                photo = #{photo}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delEmpById">
+        DELETE FROM t_emp WHERE id = #{id}
+    </delete>
+    
+</mapper>

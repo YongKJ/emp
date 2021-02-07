@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.StudentMapper">
+
+    <select id="getStudentById" resultType="com.etc.domain.Student">
+        SELECT * FROM t_student WHERE id = #{id}
+    </select>
+
+    <select id="getAllStudent" resultType="com.etc.domain.Student">
+        SELECT * FROM t_student
+    </select>
+
+    <insert id="addStudent" parameterType="com.etc.domain.Student">
+	    INSERT INTO  t_student (no, name, sex, birthday, cardno, school, education, class_id, flag, email, qq, phone, createdate, photo) VALUES (#{no}, #{name}, #{sex}, #{birthday}, #{cardno}, #{school}, #{education}, #{class_id}, #{flag}, #{email}, #{qq}, #{phone}, #{createdate}, #{photo})
+	</insert>
+
+    <update id="modStudentById" parameterType="com.etc.domain.Student" >
+        update t_student
+        <trim prefix="set" suffixOverrides=",">
+            <if test="no != null">
+                no = #{no},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="cardno != null">
+                cardno = #{cardno},
+            </if>
+            <if test="school != null">
+                school = #{school},
+            </if>
+            <if test="education != null">
+                education = #{education},
+            </if>
+            <if test="class_id != null">
+                class_id = #{class_id},
+            </if>
+            <if test="flag != null">
+                flag = #{flag},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+
+            <if test="qq != null">
+                qq = #{qq},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="createdate != null">
+                createdate = #{createdate},
+            </if>
+            <if test="photo != null">
+                photo = #{photo}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delStudentById">
+        DELETE FROM t_student WHERE id = #{id}
+    </delete>
+
+</mapper>

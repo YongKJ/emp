@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.MajorMapper">
+
+    <select id="getMajorById" resultType="com.etc.domain.Major">
+        SELECT * FROM t_major WHERE id = #{id}
+    </select>
+
+    <select id="getAllMajor" resultType="com.etc.domain.Major">
+        SELECT * FROM t_major
+    </select>
+
+    <insert id="addMajor" parameterType="com.etc.domain.Major">
+	    INSERT INTO  t_major (major_name, major_time, major_date, major_type) VALUES (#{major_name}, #{major_time}, #{major_date}, #{major_type})
+	</insert>
+
+    <update id="modMajorById" parameterType="com.etc.domain.Major" >
+        update t_major
+        <trim prefix="set" suffixOverrides=",">
+            <if test="major_name != null">
+                major_name = #{major_name},
+            </if>
+            <if test="major_time != null">
+                major_time = #{major_time},
+            </if>
+            <if test="major_date != null">
+                major_date = #{major_date},
+            </if>
+            <if test="major_type != null">
+                major_type = #{major_type}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delMajorById">
+        DELETE FROM t_major WHERE id = #{id}
+    </delete>
+
+</mapper>

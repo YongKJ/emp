@@ -1,0 +1,58 @@
+@import url(//at.alicdn.com/t/font_2038452_5y2hlwegyui.css);
+
+#content {
+    margin-bottom: 80px;
+}
+
+.breadcrumb  {padding: .25rem 1rem;font-size: .9rem;}
+
+[v-cloak] {
+    display: none;
+}
+
+.pull-right {
+    float: right;
+}
+
+.pull-left {
+    float: left;
+}
+
+.ad {
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    font-size: .75rem;
+    color: #b3b3b3;
+    border-left: 1px solid rgba(0,0,0,.125);
+    border-top: 1px solid rgba(0,0,0,.125);
+    height: 14px;
+    line-height: 14px;
+    padding: 0 5px;
+    border-top-left-radius: .25rem;
+}
+
+.toolbox:hover{
+    background-color: aliceblue;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    /* vertical-align: -0.15em; */
+    fill: currentColor;
+    overflow: hidden;
+}
+
+
+.pagination {background: #fff;display: flex;justify-content:center}
+.pagination li{margin: 0 2px;}
+.pagination li>a{padding: 3px 10px;display: block;background-clip:border-box;border:1px solid rgba(0,0,0,.125);}
+.pagination li>span{padding: 3px 10px;display: block;}
+.pagination li:hover {background-color: #e3e3e3;}
+.pagination .active{background-color: #46A3FF;color: #ffffff;}
+.pagination .disabled{color: #ffffff;background-color:#e3e3e3;background-clip:border-box;border:1px solid rgba(0,0,0,.125);}

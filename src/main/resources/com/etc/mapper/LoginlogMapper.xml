@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.LoginlogMapper">
+
+    <select id="getLoginlogById" resultType="com.etc.domain.Loginlog">
+        SELECT * FROM t_loginlog WHERE id = #{id}
+    </select>
+
+    <select id="getAllLoginlog" resultType="com.etc.domain.Loginlog">
+        SELECT * FROM t_loginlog
+    </select>
+
+    <select id="getLoginlogByNo" resultType="com.etc.domain.Loginlog">
+        SELECT * FROM t_loginlog WHERE no = #{no} ORDER BY createtime DESC
+    </select>
+
+    <insert id="addLoginlog" parameterType="com.etc.domain.Loginlog">
+	    INSERT INTO  t_loginlog (ip, no, createtime, location) VALUES (#{ip}, #{no}, #{createtime}, #{location})
+	</insert>
+
+    <update id="modLoginlogById" parameterType="com.etc.domain.Loginlog" >
+        update t_loginlog
+        <trim prefix="set" suffixOverrides=",">
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="no != null">
+                no = #{no},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+            <if test="location != null">
+                location = #{location}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delLoginlogById">
+        DELETE FROM t_loginlog WHERE id = #{id}
+    </delete>
+    
+</mapper>

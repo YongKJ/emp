@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.etc.mapper.DepartMapper">
+
+    <select id="getDepartById" resultType="com.etc.domain.Depart">
+        SELECT * FROM t_depart WHERE id = #{id}
+    </select>
+
+    <select id="getAllDepart" resultType="com.etc.domain.Depart">
+        SELECT * FROM t_depart
+    </select>
+
+    <insert id="addDepart" parameterType="com.etc.domain.Depart">
+	    INSERT INTO  t_depart (name, createtime) VALUES (#{name}, #{createtime})
+	</insert>
+
+    <update id="modDepartById" parameterType="com.etc.domain.Depart" >
+        update t_depart
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime}
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="delDepartById">
+        DELETE FROM t_depart WHERE id = #{id}
+    </delete>
+
+</mapper>
